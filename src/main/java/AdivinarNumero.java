@@ -10,18 +10,19 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import java.io.IOException;
+import java.lang.NumberFormatException;
 
 public class AdivinarNumero extends Application {
 
 	private Label saludoLabel;
 	private Button adivinButton;
 	private TextField numText;
-	private int numAleatorio = (int) Math.random() * 100;
+	private int numAleatorio = (int) Math.random() * 100 + 1;
 	int nIntentos = 0;
 	Alert malaMenor = new Alert(AlertType.WARNING);
 	Alert malaMayor = new Alert(AlertType.WARNING);
 	Alert buena = new Alert(AlertType.INFORMATION);
+	Alert alert = new Alert(AlertType.ERROR);
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -52,71 +53,54 @@ public class AdivinarNumero extends Application {
 
 		// hacer algo para que el dato introducido sea int para compararlo con el nº
 		// aleatorio generado
-		
-		try {
-			String numero = numText.getText();
 
-			Integer num = Integer.parseInt(numero);
-		}catch{
-			
-		}
-		
-		
 		int nIntentos = 0;
-		
-		malaMenor.setTitle("Cuadro de información");
-		malaMenor.setHeaderText("¡Has fallado!");
-		malaMenor.setContentText("El número es menor que " + num);
-		malaMenor.setContentText("Vuelve a intentarlo");
-
-		
-		malaMayor.setTitle("Cuadro de información");
-		malaMayor.setHeaderText("¡Has fallado!");
-		malaMayor.setContentText("El número es mayor que " + num);
-		malaMayor.setContentText("Vuelve a intentarlo");
-
-		
-		buena.setTitle("Cuadro de información");
-		buena.setHeaderText("¡Has ganado!");
-		buena.setContentText("Sólo has necesitado " + nIntentos + "intentos");
-		buena.setContentText("Vuelve a jugar y hazlo mejor");
 
 	}
 
 	private void onComprobarButtonAction(ActionEvent e) {
-		String numero = numText.getText();
-
-		Integer num = Integer.parseInt(numero);
 
 		// hacer algo para que el dato introducido sea int para compararlo con el nº
 		// aleatorio generado
 
-		
-		
+		malaMenor.setTitle("¡Fallaste!");
+		malaMenor.setHeaderText("¡Has fallado!");
 
-		if (num == numAleatorio) {
-			nIntentos++;
-			buena.showAndWait();
-			nIntentos = 0;
-		}else if (numAleatorio < num) {
-			nIntentos++;
-			malaMenor.showAndWait();
-		}else{
-			nIntentos++;
-			malaMayor.showAndWait();
+		malaMayor.setTitle("¡Fallaste!");
+		malaMayor.setHeaderText("¡Has fallado!");
+
+		buena.setTitle("¡Enhorabuena!");
+		buena.setHeaderText("¡Has ganado!");
+
+		try {
+			int num = Integer.parseInt(numText.getText());
+
+			if (num == numAleatorio) {
+				buena.setContentText(
+						"Sólo has necesitado " + nIntentos + " intento/os" + "\n" + "Vuelve a jugar y hazlo mejor");
+				buena.showAndWait();
+				nIntentos++;
+
+			} else if (num < 1 || num > 100) {
+				alert.setContentText("El número introducido no es válido.");
+				alert.showAndWait();
+				nIntentos++;
+			} else if (numAleatorio < num) {
+				malaMenor.setContentText("El número es menor que " + num + "\n" + "Vuelve a intentarlo");
+				malaMenor.showAndWait();
+				nIntentos++;
+			} else {
+				malaMayor.setContentText("El número es mayor que " + num + "\n" + "Vuelve a intentarlo");
+				malaMayor.showAndWait();
+				nIntentos++;
+			}
+
+		} catch (NumberFormatException a) {
+			alert.setTitle("Error");
+			alert.setHeaderText("Error");
+			alert.setContentText("El número introducido no es válido.");
+			alert.showAndWait();
 		}
-//		
-//		try {
-//			Alert alert = new Alert(AlertType.ERROR);
-//			alert.setTitle("Error");
-//			alert.setHeaderText("Error");
-//			alert.setContentText("El número introducido no es válido.");
-//
-//			alert.showAndWait();
-//		
-//		}catch(Exception a) {
-//			
-//		}
 	}
 
 	public static void main(String[] args) {
